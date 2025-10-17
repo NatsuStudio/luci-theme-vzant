@@ -36,15 +36,16 @@ jobs:
 
         - name: 安装编译环境
           run: |
+            sudo add-apt-repository universe
             sudo -E apt -yqq update  # 更新软件包列表
-            sudo -E apt -yqq install libfuse-dev xz-utils ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7.18 python3 python3-pyelftools libpython3-dev qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev python3-setuptools || true  # 安装所需的构建工具和依赖
+            sudo -E apt -yqq install libfuse-dev ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pyelftools libpython3-dev qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev python3-setuptools || true  # 安装所需的构建工具和依赖
             sudo -E apt -yqq autoremove --purge  # 检测移除不需要的软件包及配置文件
             sudo -E apt -yqq autoclean  # 清理软件包工具的缓存
 
         - name: 安装SDK
           run: |
             wget -O openwrt-sdk.tar.xz ${{ matrix.target.sdk }}  # 下载OpenWrt SDK
-            xz -q -d *.tar.xz && tar -xvf *.tar  # 自动匹配xz和tar文件 解压OpenWrt SDK
+            tar -xvf *.tar.xz  # 自动匹配xz和tar文件 解压OpenWrt SDK
             mv -f openwrt-sdk-* openwrt-sdk && rm -rf *.tar  # 重命名SDK目录为 openwrt-sdk并删除解压tar文件
 
         - name: 配置更新
