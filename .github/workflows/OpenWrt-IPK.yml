@@ -59,11 +59,11 @@ jobs:
           cd $SDK_DIR
           # 更新feeds（OpenWrt包索引）
           # 更新与安装全部 如果只单独编译一个指定的包就不要动
-          # ./scripts/feeds update -a
-          # ./scripts/feeds install -a
+          ./scripts/feeds update -a
+          ./scripts/feeds install--a
           
           # 只更新必要的feeds（如luci、packages）
-          ./scripts/feeds update luci packages
+          # ./scripts/feeds update luci packages
 
           # （可选）如果你的包在当前仓库，将其复制到SDK的package目录
           # 复制自定义包到SDK
@@ -72,7 +72,7 @@ jobs:
           cp -r $GITHUB_WORKSPACE/${TARGET_PACKAGE} package/
           
           # 只安装目标包或自定义包（会自动安装依赖） install后面可以替换成自己需要的目标包
-          ./scripts/feeds install ${TARGET_PACKAGE}
+          # ./scripts/feeds install ${TARGET_PACKAGE}
 
           # （可选）添加自定义feed（如果包在第三方仓库）
           # echo 'src-git custom https://github.com/你的仓库.git' >> feeds.conf.default
@@ -109,8 +109,8 @@ jobs:
           path: "*.ipk"  # 上传当前目录下所有IPK文件
           retention-days: 30  # 产物保留30天
 
-      - name: 缓存下载的源码包
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.SDK_DIR }}/dl
-          key: ${{ runner.os }}-dl-${{ hashFiles('**/Makefile') }}
+     # - name: 缓存下载的源码包
+     #   uses: actions/cache@v3
+     #   with:
+     #     path: ${{ env.SDK_DIR }}/dl
+     #     key: ${{ runner.os }}-dl-${{ hashFiles('**/Makefile') }}
