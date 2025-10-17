@@ -16,8 +16,8 @@ jobs:
     runs-on: ubuntu-latest  # 使用Ubuntu环境（OpenWrt编译推荐）
     env:
       # 配置参数（根据你的需求修改）
-      SDK_URL: "https://downloads.openwrt.org/releases/23.05.0/targets/x86/64/openwrt-sdk-23.05.0-x86-64_gcc-12.3.0_musl.Linux-x86_64.tar.xz"  # OpenWrt SDK下载地址
-      TARGET_PACKAGE: "luci-app-example"  # 要编译的包名（如luci-app-ssr-plus）
+      SDK_URL: "https://mirrors.tuna.tsinghua.edu.cn/openwrt/releases/24.10.3/targets/ramips/mt7620/openwrt-sdk-24.10.3-ramips-mt7620_gcc-13.3.0_musl.Linux-x86_64.tar.zst"  # OpenWrt SDK下载地址
+      TARGET_PACKAGE: "luci-theme-vzant"  # 要编译的包名（如luci-app-ssr-plus）
       SDK_DIR: "openwrt-sdk"  # SDK解压后的目录名
 
     steps:
@@ -51,6 +51,7 @@ jobs:
 
           # （可选）如果你的包在当前仓库，将其复制到SDK的package目录
           # 例如：cp -r ../package/${TARGET_PACKAGE} package/
+          cp -r ../package/${TARGET_PACKAGE} package/
 
           # （可选）添加自定义feed（如果包在第三方仓库）
           # echo 'src-git custom https://github.com/你的仓库.git' >> feeds.conf.default
@@ -86,3 +87,9 @@ jobs:
           name: openwrt-ipk-${{ env.TARGET_PACKAGE }}
           path: "*.ipk"  # 上传当前目录下所有IPK文件
           retention-days: 30  # 产物保留30天
+
+      - name: 缓存下载的源码包
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.SDK_DIR }}/dl
+          key: ${{ runner.os }}-dl-${{ hashFiles('**/Makefile') }}
