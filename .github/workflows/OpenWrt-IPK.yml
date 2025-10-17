@@ -60,7 +60,7 @@ jobs:
           # 更新feeds（OpenWrt包索引）
           # 更新与安装全部 如果只单独编译一个指定的包就不要动
           ./scripts/feeds update -a
-          ./scripts/feeds install--a
+          ./scripts/feeds install -a
           
           # 只更新必要的feeds（如luci、packages）
           # ./scripts/feeds update luci packages
