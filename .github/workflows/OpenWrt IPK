@@ -1,0 +1,88 @@
+name: 单独编译OpenWrt IPK
+
+# 触发条件：手动触发、推送到main分支、PR到main分支
+on:
+  workflow_dispatch:  # 支持手动触发（在GitHub页面点击运行）
+  push:
+    branches: [ main ]
+    paths:
+      - 'package/**'  # 仅当package目录有变动时触发（可选）
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-ipk:
+    name: 编译IPK包
+    runs-on: ubuntu-latest  # 使用Ubuntu环境（OpenWrt编译推荐）
+    env:
+      # 配置参数（根据你的需求修改）
+      SDK_URL: "https://downloads.openwrt.org/releases/23.05.0/targets/x86/64/openwrt-sdk-23.05.0-x86-64_gcc-12.3.0_musl.Linux-x86_64.tar.xz"  # OpenWrt SDK下载地址
+      TARGET_PACKAGE: "luci-app-example"  # 要编译的包名（如luci-app-ssr-plus）
+      SDK_DIR: "openwrt-sdk"  # SDK解压后的目录名
+
+    steps:
+      - name: 检查代码仓库
+        uses: actions/checkout@v4  # 拉取当前仓库代码（如果你的包在仓库中）
+
+      - name: 安装系统依赖
+        run: |
+          sudo apt update -y
+          # 安装OpenWrt编译所需的基础工具
+          sudo apt install -y \
+            build-essential libncurses5-dev libncursesw5-dev \
+            zlib1g-dev gawk git gettext libssl-dev xsltproc \
+            wget unzip xz-utils flex bison python3
+
+      - name: 下载并解压OpenWrt SDK
+        run: |
+          # 下载SDK
+          wget -q $SDK_URL -O sdk.tar.xz
+          # 解压SDK
+          tar xJf sdk.tar.xz
+          # 重命名SDK目录（方便后续操作）
+          mv openwrt-sdk-* $SDK_DIR
+
+      - name: 配置SDK并添加自定义包（可选）
+        run: |
+          cd $SDK_DIR
+          # 更新feeds（OpenWrt包索引）
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+          # （可选）如果你的包在当前仓库，将其复制到SDK的package目录
+          # 例如：cp -r ../package/${TARGET_PACKAGE} package/
+
+          # （可选）添加自定义feed（如果包在第三方仓库）
+          # echo 'src-git custom https://github.com/你的仓库.git' >> feeds.conf.default
+          # ./scripts/feeds update custom
+          # ./scripts/feeds install ${TARGET_PACKAGE}
+
+      - name: 配置编译选项
+        run: |
+          cd $SDK_DIR
+          # 生成默认配置
+          make defconfig
+          # 启用目标包的编译（通过.config文件指定）
+          echo "CONFIG_PACKAGE_${TARGET_PACKAGE}=y" >> .config
+          # 检查配置（可选）
+          cat .config | grep ${TARGET_PACKAGE}
+
+      - name: 编译目标IPK包
+        run: |
+          cd $SDK_DIR
+          # 编译指定包（-j$(nproc)启用多线程加速，V=s显示详细日志）
+          make package/${TARGET_PACKAGE}/compile V=s -j$(nproc)
+
+      - name: 收集编译产物
+        run: |
+          # 查找生成的IPK文件（路径因架构/版本略有差异）
+          find $SDK_DIR/bin/packages -name "*.ipk" -exec cp {} ./ \;
+          # 列出所有IPK（方便确认）
+          ls -l *.ipk
+
+      - name: 上传IPK作为Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openwrt-ipk-${{ env.TARGET_PACKAGE }}
+          path: "*.ipk"  # 上传当前目录下所有IPK文件
+          retention-days: 30  # 产物保留30天
