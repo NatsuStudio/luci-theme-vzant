@@ -69,8 +69,7 @@ jobs:
           # 复制自定义包到SDK
           # GITHUB_WORKSPACE是仓库根目录的绝对路径
           # 假设SDK的package目录是 $SDK_DIR/package
-          mkdir package
-          cp -r $GITHUB_WORKSPACE/${TARGET_PACKAGE} $SDK_DIR/package/
+          cp -r $GITHUB_WORKSPACE/${TARGET_PACKAGE} package/
           
           # 只安装目标包或自定义包（会自动安装依赖） install后面可以替换成自己需要的目标包
           ./scripts/feeds install ${TARGET_PACKAGE}
