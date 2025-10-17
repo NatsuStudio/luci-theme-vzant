@@ -19,18 +19,6 @@ jobs:
       SDK_URL: "https://mirrors.tuna.tsinghua.edu.cn/openwrt/releases/24.10.3/targets/ramips/mt7620/openwrt-sdk-24.10.3-ramips-mt7620_gcc-13.3.0_musl.Linux-x86_64.tar.zst"  # OpenWrt SDK下载地址
       TARGET_PACKAGE: "luci-theme-vzant"  # 要编译的包名（如luci-app-ssr-plus）
       SDK_DIR: "openwrt-sdk"  # SDK解压后的目录名
-      
-    strategy:
-      matrix:
-        target:
-          - arch: "mt7620"  # 目标架构
-            target: "ramips"  # target目录
-            sdk: "https://mirrors.tuna.tsinghua.edu.cn/openwrt/releases/24.10.3/targets/ramips/mt7620/openwrt-sdk-24.10.3-ramips-mt7620_gcc-13.3.0_musl.Linux-x86_64.tar.zst"  # OpenWrt SDK的下载链接
-            kernel: "5.15"  # kernel内核版本
-            package: "luci-theme-vzant"  # 第三方ipk软件包名称
-            name: "vzant"  # 第三方ipk软件包简称，通配符匹配用
-            # url: "https://github.com/ykxVK8yL5L/luci-theme-vzant.git"  # 配置feeds.conf.default拉取第三方ipk软件包链接，仅支持一级目录
-            # branches: "main" # 分支
 
     steps:
       - name: 检查代码仓库
@@ -48,11 +36,31 @@ jobs:
       - name: 下载并解压OpenWrt SDK
         run: |
           # 下载SDK
-          wget -O openwrt-sdk.tar.xz $SDK_URL  # 下载OpenWrt SDK
+          # wget -O openwrt-sdk.tar.xz $SDK_URL  # 下载OpenWrt SDK
           # 解压SDK
-          tar -xvf *.tar.xz  # 自动匹配xz和tar文件 解压OpenWrt SDK
+          # tar -xvf *.tar.xz  # 自动匹配xz和tar文件 解压OpenWrt SDK
           # 重命名SDK目录（方便后续操作）
-          mv -f openwrt-sdk-* $SDK_DIR && rm -rf *.tar  # 重命名SDK目录为 openwrt-sdk并删除解压tar文件
+          # mv -f openwrt-sdk-* $SDK_DIR && rm -rf *.tar  # 重命名SDK目录为 openwrt-sdk并删除解压tar文件
+          # 1. 测试链接有效性
+          if ! wget --spider $SDK_URL 2>/dev/null; then
+            echo "错误：SDK URL无效，请检查 $SDK_URL"
+            exit 1
+          fi
+      
+          # 2. 下载文件（支持断点续传）
+          wget -c $SDK_URL -O sdk.tar.xz
+      
+          # 3. 验证文件格式和完整性
+          if ! xz --test sdk.tar.xz; then
+            echo "错误：下载的文件不是有效的.tar.xz格式，可能损坏或URL错误"
+            # 输出文件前10行，排查是否是HTML错误页（比如404）
+            head -n 10 sdk.tar.xz
+            exit 1
+          fi
+      
+          # 4. 解压（验证通过后再执行）
+          tar xJf sdk.tar.xz
+          mv openwrt-sdk-* $SDK_DIR
 
       - name: 配置SDK并添加自定义包（可选）
         run: |
