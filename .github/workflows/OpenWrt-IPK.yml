@@ -5,8 +5,8 @@ on:
   workflow_dispatch:  # 支持手动触发（在GitHub页面点击运行）
   push:
     branches: [ main ]
-    paths:
-      - 'package/**'  # 仅当package目录有变动时触发（可选）
+   #paths:
+      #- 'package/**'  # 仅当package目录有变动时触发（可选）
   pull_request:
     branches: [ main ]
 
