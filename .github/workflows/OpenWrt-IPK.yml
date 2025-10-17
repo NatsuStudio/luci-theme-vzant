@@ -51,7 +51,7 @@ jobs:
           wget -c $SDK_URL -O sdk.tar.xz
       
           # 3. 解压（验证通过后再执行）
-          tar xJf sdk.tar.xz
+          tar -xvf *.tar.xz  # 自动匹配xz和tar文件 解压OpenWrt SDK
           mv openwrt-sdk-* $SDK_DIR
 
       - name: 配置SDK并添加自定义包（可选）
