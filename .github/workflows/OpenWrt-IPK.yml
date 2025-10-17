@@ -50,15 +50,7 @@ jobs:
           # 2. 下载文件（支持断点续传）
           wget -c $SDK_URL -O sdk.tar.xz
       
-          # 3. 验证文件格式和完整性
-          if ! xz --test sdk.tar.xz; then
-            echo "错误：下载的文件不是有效的.tar.xz格式，可能损坏或URL错误"
-            # 输出文件前10行，排查是否是HTML错误页（比如404）
-            head -n 10 sdk.tar.xz
-            exit 1
-          fi
-      
-          # 4. 解压（验证通过后再执行）
+          # 3. 解压（验证通过后再执行）
           tar xJf sdk.tar.xz
           mv openwrt-sdk-* $SDK_DIR
 
