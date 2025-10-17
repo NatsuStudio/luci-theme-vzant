@@ -23,7 +23,7 @@ jobs:
           target:
             - arch: "mt7620"  # 目标架构
               target: "ramips"  # target目录
-              sdk: "https://mirrors.tuna.tsinghua.edu.cn/openwrt/releases/24.10.3/targets/ramips/mt7620/openwrt-24.10.3-ramips-mt7620-lenovo_newifi-y1s-squashfs-sysupgrade.bin"  # OpenWrt SDK的下载链接
+              sdk: "https://mirrors.tuna.tsinghua.edu.cn/openwrt/releases/24.10.3/targets/ramips/mt7620/openwrt-sdk-24.10.3-ramips-mt7620_gcc-13.3.0_musl.Linux-x86_64.tar.zst"  # OpenWrt SDK的下载链接
               kernel: "5.15"  # kernel内核版本
               package: "luci-theme-vzant"  # 第三方ipk软件包名称
               name: "vzant"  # 第三方ipk软件包简称，通配符匹配用
