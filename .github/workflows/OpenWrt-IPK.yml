@@ -19,6 +19,18 @@ jobs:
       SDK_URL: "https://mirrors.tuna.tsinghua.edu.cn/openwrt/releases/24.10.3/targets/ramips/mt7620/openwrt-sdk-24.10.3-ramips-mt7620_gcc-13.3.0_musl.Linux-x86_64.tar.zst"  # OpenWrt SDK下载地址
       TARGET_PACKAGE: "luci-theme-vzant"  # 要编译的包名（如luci-app-ssr-plus）
       SDK_DIR: "openwrt-sdk"  # SDK解压后的目录名
+      
+    strategy:
+      matrix:
+        target:
+          - arch: "mt7620"  # 目标架构
+            target: "ramips"  # target目录
+            sdk: "https://mirrors.tuna.tsinghua.edu.cn/openwrt/releases/24.10.3/targets/ramips/mt7620/openwrt-sdk-24.10.3-ramips-mt7620_gcc-13.3.0_musl.Linux-x86_64.tar.zst"  # OpenWrt SDK的下载链接
+            kernel: "5.15"  # kernel内核版本
+            package: "luci-theme-vzant"  # 第三方ipk软件包名称
+            name: "vzant"  # 第三方ipk软件包简称，通配符匹配用
+            # url: "https://github.com/ykxVK8yL5L/luci-theme-vzant.git"  # 配置feeds.conf.default拉取第三方ipk软件包链接，仅支持一级目录
+            # branches: "main" # 分支
 
     steps:
       - name: 检查代码仓库
