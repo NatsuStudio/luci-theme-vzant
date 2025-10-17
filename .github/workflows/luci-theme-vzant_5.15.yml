@@ -21,9 +21,9 @@ jobs:
       strategy:
         matrix:
           target:
-            - arch: "aarch64_generic"  # 目标架构
-              target: "rockchip"  # target目录
-              sdk: "https://downloads.openwrt.org/snapshots/targets/rockchip/armv8/openwrt-sdk-rockchip-armv8_gcc-12.3.0_musl.Linux-x86_64.tar.xz"  # OpenWrt SDK的下载链接
+            - arch: "mt7620"  # 目标架构
+              target: "ramips"  # target目录
+              sdk: "https://mirrors.tuna.tsinghua.edu.cn/openwrt/releases/24.10.3/targets/ramips/mt7620/openwrt-24.10.3-ramips-mt7620-lenovo_newifi-y1s-squashfs-sysupgrade.bin"  # OpenWrt SDK的下载链接
               kernel: "5.15"  # kernel内核版本
               package: "luci-theme-vzant"  # 第三方ipk软件包名称
               name: "vzant"  # 第三方ipk软件包简称，通配符匹配用
