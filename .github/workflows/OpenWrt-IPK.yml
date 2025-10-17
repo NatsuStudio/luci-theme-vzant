@@ -63,7 +63,12 @@ jobs:
 
           # （可选）如果你的包在当前仓库，将其复制到SDK的package目录
           # 例如：cp -r ../package/${TARGET_PACKAGE} package/
-          cp -r ../package/${TARGET_PACKAGE} package/
+          # cp -r ../package/${TARGET_PACKAGE} package/
+          - name: 复制自定义包到SDK
+          # 复制自定义包到SDK
+          # GITHUB_WORKSPACE是仓库根目录的绝对路径
+          # 假设SDK的package目录是 $SDK_DIR/package
+          cp -r $GITHUB_WORKSPACE/${TARGET_PACKAGE} $SDK_DIR/package/
 
           # （可选）添加自定义feed（如果包在第三方仓库）
           # echo 'src-git custom https://github.com/你的仓库.git' >> feeds.conf.default
