@@ -5,8 +5,8 @@ on:
   workflow_dispatch:  # 支持手动触发（在GitHub页面点击运行）
   push:
     branches: [ main ]
-   #paths:
-      #- 'package/**'  # 仅当package目录有变动时触发（可选）
+  paths:
+    - 'package/**'  # 仅当package目录有变动时触发（可选）
   pull_request:
     branches: [ main ]
 
@@ -58,17 +58,21 @@ jobs:
         run: |
           cd $SDK_DIR
           # 更新feeds（OpenWrt包索引）
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
+          # 更新与安装全部 如果只单独编译一个指定的包就不要动
+          # ./scripts/feeds update -a
+          # ./scripts/feeds install -a
+          
+          # 只更新必要的feeds（如luci、packages）
+          ./scripts/feeds update luci packages
 
           # （可选）如果你的包在当前仓库，将其复制到SDK的package目录
-          # 例如：cp -r ../package/${TARGET_PACKAGE} package/
-          # cp -r ../package/${TARGET_PACKAGE} package/
-          - name: 复制自定义包到SDK
           # 复制自定义包到SDK
           # GITHUB_WORKSPACE是仓库根目录的绝对路径
           # 假设SDK的package目录是 $SDK_DIR/package
           cp -r $GITHUB_WORKSPACE/${TARGET_PACKAGE} $SDK_DIR/package/
+          
+          # 只安装目标包或自定义包（会自动安装依赖） install后面可以替换成自己需要的目标包
+          ./scripts/feeds install ${TARGET_PACKAGE}
 
           # （可选）添加自定义feed（如果包在第三方仓库）
           # echo 'src-git custom https://github.com/你的仓库.git' >> feeds.conf.default
