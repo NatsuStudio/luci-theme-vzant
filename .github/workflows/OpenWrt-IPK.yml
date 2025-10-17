@@ -36,11 +36,11 @@ jobs:
       - name: 下载并解压OpenWrt SDK
         run: |
           # 下载SDK
-          wget -q $SDK_URL -O sdk.tar.xz
+          wget -O openwrt-sdk.tar.xz $SDK_URL  # 下载OpenWrt SDK
           # 解压SDK
-          tar xJf sdk.tar.xz
+          tar -xvf *.tar.xz  # 自动匹配xz和tar文件 解压OpenWrt SDK
           # 重命名SDK目录（方便后续操作）
-          mv openwrt-sdk-* $SDK_DIR
+          mv -f openwrt-sdk-* $SDK_DIR && rm -rf *.tar  # 重命名SDK目录为 openwrt-sdk并删除解压tar文件
 
       - name: 配置SDK并添加自定义包（可选）
         run: |
