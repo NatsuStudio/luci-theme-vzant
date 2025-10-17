@@ -62,10 +62,10 @@ jobs:
             ./scripts/feeds install -f -a  # 安装feeds依赖的软件包
 
         - name: 添加插件
-          run: |
-            chmod +x part.sh  # 附加权限给part.sh
+          run: | 
             cat ${{ matrix.target.package }}.config >> openwrt-sdk/.config  # 勾选配置项构建编译条件
             cd openwrt-sdk  # 进入OpenWrt SDK目录
+            chmod +x part.sh  # 附加权限给part.sh
             $GITHUB_WORKSPACE/part.sh  # 运行part.sh
 
         - name: 编译ipk插件
